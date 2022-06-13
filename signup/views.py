@@ -1,8 +1,20 @@
-from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserForm
 from .utils import user_exist
+from django.shortcuts import render, redirect
 from .utils import valid_username
+from .forms import UserForm
+
+def signup_page(request):
+    form = UserForm()
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid() and valid_username(form):
+            form.save()
+            return redirect('home')
+    context = {
+        'form' : form
+    }
+    return render(request, 'signup/signup.html', context)
 
 def signin_page(request):
     form = UserForm()
@@ -18,14 +30,4 @@ def signin_page(request):
     return render(request, 'signup/signin.html', context)
 
 
-def signup_page(request):
-    form = UserForm()
-    if request.method == 'POST':
-        form = UserForm(request.POST)
-        if form.is_valid() and valid_username(form):
-            form.save()
-            return redirect('home')
-    context = {
-        'form' : form
-    }
-    return render(request, 'signup/signup.html', context)
+
